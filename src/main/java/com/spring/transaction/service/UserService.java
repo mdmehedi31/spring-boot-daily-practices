@@ -3,6 +3,7 @@ package com.spring.transaction.service;
 
 import com.spring.transaction.entity.UserEntity;
 import com.spring.transaction.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ public class UserService {
     private UserRepository userRepository;
 
 
+    @Transactional(rollbackOn = Exception.class)
     public String transferMoneyBetweenAccount(Integer fromAccountId, Integer toAccountId, Double amount) throws Exception {
         try{
 
@@ -24,7 +26,7 @@ public class UserService {
             userRepository.save(toUser);
 
             if(amount > fromUser.getSalary()){
-                throw new Exception();
+                throw new Exception("Insufficient funds");
             }
 
             fromUser.setSalary(fromUser.getSalary()-amount);
